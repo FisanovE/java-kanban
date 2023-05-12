@@ -1,4 +1,8 @@
-import java.util.HashMap;
+import models.business.Epic;
+import models.business.SubTask;
+import models.business.Task;
+import models.enums.Status;
+import services.manager.TaskManager;
 
 public class Main {
 	public static void main(String[] args) {
@@ -9,22 +13,22 @@ public class Main {
 
 //Создайте 2 задачи, один эпик с 2 подзадачами, а другой эпик с 1 подзадачей.
 
-		Task task1 = new Task(0, "Уборка", "Сделать уборку в кухне", "NEW");
-		Task task2 = new Task(0, "Покупки", "Купить продукты в магазине", "NEW");
+		Task task1 = new Task(0, "Уборка", "Сделать уборку в кухне", Status.NEW);
+		Task task2 = new Task(0, "Покупки", "Купить продукты в магазине", Status.NEW);
 
 		Epic epic1 = new Epic(0, "Залить бетон", "Купить компоненты для бетона и залить бетон");
 
 
-		SubTask subTask1 = new SubTask(0, "Купить компоненты", "Купить компоненты для бетона", "NEW", 1);
-		SubTask subTask2 = new SubTask(0, "Залить бетон", "Залить бетон из Купленных компонентов", "NEW", 1);
+		SubTask subTask1 = new SubTask(0, "Купить компоненты", "Купить компоненты для бетона", Status.NEW, 1);
+		SubTask subTask2 = new SubTask(0, "Залить бетон", "Залить бетон из купленных компонентов", Status.NEW, 1);
 
-		SubTask updateSubTask1 = new SubTask(5, "Купить компоненты", "Купить компоненты для бетона", "DONE", 1);
-		SubTask updateSubTask2 = new SubTask(6, "Залить бетон", "Залить бетон из Купленных компонентов", "DONE", 1);
+		SubTask updateSubTask1 = new SubTask(5, "Купить компоненты", "Купить компоненты для бетона", Status.DONE, 1);
+		SubTask updateSubTask2 = new SubTask(6, "Залить бетон", "Залить бетон из купленных компонентов", Status.DONE, 1);
 
 		Epic epic2 = new Epic(0, "Отдохнуть", "Отдохнуть от дел праведных");
 
-		SubTask subTask3 = new SubTask(0, "Начать отдыхать", "Забросить всё и начать отдыхать", "NEW", 2);
-		SubTask updateSubTask3 = new SubTask(7, "Начать отдыхать", "Забросить всё и начать отдыхать", "IN_PROGRESS", 2);
+		SubTask subTask3 = new SubTask(0, "Начать отдыхать", "Забросить всё и начать отдыхать", Status.NEW, 2);
+		SubTask updateSubTask3 = new SubTask(7, "Начать отдыхать", "Забросить всё и начать отдыхать", Status.IN_PROGRESS, 2);
 
 		taskManager.addNewEpicTask(epic1);
 		taskManager.addNewEpicTask(epic2);

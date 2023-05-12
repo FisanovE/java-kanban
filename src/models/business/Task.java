@@ -1,8 +1,13 @@
+package models.business;
+
+import models.enums.Status;
+
 public class Task {
 	private String name;
 	private String annotation;
 	private int ID;
-	private String status;
+	private Status status;
+	//private String status;
 
 	public Task(String name, String annotation) {
 		this.name = name;
@@ -15,7 +20,7 @@ public class Task {
 		this.annotation = annotation;
 	}
 
-	public Task(int ID, String name, String annotation, String status) {
+	public Task(int ID, String name, String annotation, Status status) {
 		this.ID = ID;
 		this.name = name;
 		this.annotation = annotation;
@@ -34,7 +39,8 @@ public class Task {
 		return ID;
 	}
 
-	public String getStatus() {
+	public Status getStatus() {
+
 		return status;
 	}
 
@@ -50,16 +56,13 @@ public class Task {
 		this.ID = ID;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
 	@Override
 	public String toString() {
-		String result = "__" +
-				"__" + name +
-				"__" + status +
-				"__" + annotation + "\n";
+		String result = "__" + "__" + name + "__" + status + "__" + annotation + "\n";
 		return result;
 	}
 }
