@@ -4,49 +4,47 @@ import models.business.Epic;
 import models.business.SubTask;
 import models.business.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public interface TaskManager {
 
-	public int addNewTask(Task task);
+	int addNewTask(Task task);
 
-	public int addNewEpicTask(Epic epic);
+	int addNewEpicTask(Epic epic);
 
-	public int addNewSubTask(SubTask sub);
+	int addNewSubTask(SubTask sub);
 
-	public void updateTask(Task task);
+	void updateTask(Task task);
 
-	public void updateEpic(Epic epic);
+	void updateEpic(Epic epic);
 
-	public void updateSubTask(SubTask sub);
+	void updateSubTask(SubTask sub);
 
-	public Task getTaskByID(int ID);
+	Task getTaskByID(int ID);
 
-	public Epic getEpicByID(int ID);
+	Epic getEpicByID(int ID);
 
-	public SubTask getSubTaskByID(int ID);
+	SubTask getSubTaskByID(int ID);
 
-	public ArrayList<Task> getAllTasks();
+	List<Task> getAllTasks();
 
-	public ArrayList<Epic> getAllEpics();
+	List<Epic> getAllEpics();
 
-	public ArrayList<SubTask> getAllSubTasks();
+	List<SubTask> getAllSubTasks();
 
-	public ArrayList<SubTask> getAllSubTasksByEpic(int ID);
+	List<SubTask> getAllSubTasksByEpic(int ID);
 
-	public void removeTaskByID(int ID);
+	void removeTaskByID(int ID);
 
-	public void removeEpicByID(int ID);
+	void removeEpicByID(int ID);
 
-	public void removeSubTaskByID(int ID);
+	void removeSubTaskByID(int ID);
 
-	public void removeAllTasks();
+	void removeAllTasks();
 
-	public void removeAllEpics();
+	void removeAllEpics();
 
-	public void removeAllSubTasks(int ID);
+	void removeAllSubTasks(int ID);
 
-
+	List<Task> getHistory();
 }

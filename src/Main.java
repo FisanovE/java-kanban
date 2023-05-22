@@ -2,7 +2,6 @@ import models.business.Epic;
 import models.business.SubTask;
 import models.business.Task;
 import models.enums.Status;
-import services.manager.InMemoryHistoryManager;
 import services.manager.InMemoryTaskManager;
 import services.manager.Managers;
 
@@ -12,7 +11,6 @@ public class Main {
 //Тестирование по ТЗ ФП-3
 
 		InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
-		InMemoryHistoryManager historyManager = (InMemoryHistoryManager) Managers.getDefaultHistory();
 
 //Создайте 2 задачи, один эпик с 2 подзадачами, а другой эпик с 1 подзадачей.
 
@@ -64,15 +62,6 @@ public class Main {
 		System.out.println("Подзадачи: " + taskManager.getAllSubTasks());
 		System.out.println("Эпики: " + taskManager.getAllEpics());
 
-//попробуйте удалить одну из задач и один из эпиков.
-
-		/*taskManager.removeTaskByID(4);
-		System.out.println("Удалена задача2");
-		taskManager.removeEpicByID(1);
-		System.out.println("Удален эпик1");
-		System.out.println("Задачи: " + taskManager.getAllTasks());
-		System.out.println("Подзадачи: " + taskManager.getAllSubTasks());
-		System.out.println("Эпики: " + taskManager.getAllEpics());*/
 
 //Тестирование по ТЗ ФП-4
 
@@ -83,7 +72,7 @@ public class Main {
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(5));
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(6));
 
-		System.out.println("Последние задачи: " + historyManager.getHistory());
+		System.out.println("Последние задачи: " + taskManager.getHistory());
 
 		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(1));
 		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(2));
@@ -92,6 +81,6 @@ public class Main {
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(5));
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(6));
 
-		System.out.println("Последние задачи: " + historyManager.getHistory());
+		System.out.println("Последние задачи: " + taskManager.getHistory());
 	}
 }

@@ -1,23 +1,20 @@
 package services.manager;
 
 import models.business.Task;
-
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-	private int counterHistory = 0;
-	private static List<Task> historyStorage = Arrays.asList(null, null, null, null, null, null, null, null, null, null);
+	private final List<Task> historyStorage = new ArrayList<>();
 
 	@Override
 	public void add(Task task) {
-		if (counterHistory == 10) {
-			counterHistory = 0;
-			historyStorage.set(counterHistory, task);
-			counterHistory++;
-		} else {
-			historyStorage.set(counterHistory, task);
-			counterHistory++;
+		if (task != null) {
+			int numberOfLastTasks = 10;
+			if (historyStorage.size() == numberOfLastTasks) {
+				historyStorage.remove(0);
+			}
+			historyStorage.add(task);
 		}
 	}
 

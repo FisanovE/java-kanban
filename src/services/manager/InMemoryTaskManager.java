@@ -7,14 +7,15 @@ import models.enums.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 	private int counter = 1;
-	private HashMap<Integer, Task> taskStorage = new HashMap<>();
-	private HashMap<Integer, Epic> epicStorage = new HashMap<>();
-	private HashMap<Integer, SubTask> subTaskStorage = new HashMap<>();
+	private final HashMap<Integer, Task> taskStorage = new HashMap<>();
+	private final HashMap<Integer, Epic> epicStorage = new HashMap<>();
+	private final HashMap<Integer, SubTask> subTaskStorage = new HashMap<>();
 
-	HistoryManager historyManager = Managers.getDefaultHistory();
+	private final HistoryManager historyManager = Managers.getDefaultHistory();
 
 	@Override
 	public int addNewTask(Task task) {
@@ -48,7 +49,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 	@Override
 	public void updateEpic(Epic epic) {
-		ArrayList<Status> statusValuesList = new ArrayList<>();
+		List<Status> statusValuesList = new ArrayList<>();
 		for (SubTask subTask : subTaskStorage.values()) {
 			if (subTask.getEpicID() == epic.getID()) {
 				statusValuesList.add(subTask.getStatus());
@@ -100,22 +101,22 @@ public class InMemoryTaskManager implements TaskManager {
 	}
 
 	@Override
-	public ArrayList<Task> getAllTasks() {
+	public List<Task> getAllTasks() {
 		return new ArrayList<Task>(taskStorage.values());
 	}
 
 	@Override
-	public ArrayList<Epic> getAllEpics() {
+	public List<Epic> getAllEpics() {
 		return new ArrayList<Epic>(epicStorage.values());
 	}
 
 	@Override
-	public ArrayList<SubTask> getAllSubTasks() {
+	public List<SubTask> getAllSubTasks() {
 		return new ArrayList<SubTask>(subTaskStorage.values());
 	}
 
 	@Override
-	public ArrayList<SubTask> getAllSubTasksByEpic(int ID) {
+	public List<SubTask> getAllSubTasksByEpic(int ID) {
 		if (!epicStorage.containsKey(ID)) {
 			System.out.println("Эпик с этим номером ID отсутствует");
 		}
@@ -141,7 +142,7 @@ public class InMemoryTaskManager implements TaskManager {
 		if (!epicStorage.containsKey(ID)) {
 			System.out.println("Задача с этим номером ID отсутствует");
 		}
-		ArrayList<Integer> subTaskIDList = new ArrayList<>();
+		List<Integer> subTaskIDList = new ArrayList<>();
 		for (SubTask subTask : subTaskStorage.values()) {
 			if (subTask.getEpicID() == ID) {
 				subTaskIDList.add(subTask.getID());
@@ -177,5 +178,7 @@ public class InMemoryTaskManager implements TaskManager {
 		subTaskStorage.clear();
 	}
 
-
+	public List<Task> getHistory() {
+		return new ArrayList<Task>(historyManager.getHistory());
+	}
 }
