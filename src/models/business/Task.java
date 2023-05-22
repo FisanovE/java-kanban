@@ -7,7 +7,6 @@ public class Task {
 	private String annotation;
 	private int ID;
 	private Status status;
-	//private String status;
 
 	public Task(String name, String annotation) {
 		this.name = name;
@@ -62,7 +61,7 @@ public class Task {
 
 	@Override
 	public String toString() {
-		String result = "__" + "__" + name + "__" + status + "__" + annotation + "\n";
+		String result = "__" + "__" + ID + "__" + name + "__" + status + "__" + annotation + "\n";
 		return result;
 	}
 }

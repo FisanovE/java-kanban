@@ -3,152 +3,50 @@ package services.manager;
 import models.business.Epic;
 import models.business.SubTask;
 import models.business.Task;
-import models.enums.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class TaskManager {
-	private int counter = 1;
-	private HashMap<Integer, Task> taskStorage = new HashMap<>();
-	private HashMap<Integer, Epic> epicStorage = new HashMap<>();
-	private HashMap<Integer, SubTask> subTaskStorage = new HashMap<>();
+public interface TaskManager {
 
-	public int addNewTask(Task task) {
-		task.setID(counter);
-		taskStorage.put(task.getID(), task);
-		counter += 1;
-		return task.getID();
-	}
+	public int addNewTask(Task task);
 
-	public int addNewEpicTask(Epic epic) {
-		epic.setID(counter);
-		epic.setStatus(Status.NEW);
-		epicStorage.put(epic.getID(), epic);
-		counter += 1;
-		return epic.getID();
-	}
+	public int addNewEpicTask(Epic epic);
 
-	public int addNewSubTask(SubTask sub) {
-		sub.setID(counter);
-		subTaskStorage.put(sub.getID(), sub);
-		counter += 1;
-		return sub.getID();
-	}
+	public int addNewSubTask(SubTask sub);
 
-	public void updateTask(Task task) {
-		taskStorage.put(task.getID(), task);
-	}
+	public void updateTask(Task task);
 
-	public void updateEpic(Epic epic) {
-		ArrayList<Status> statusValuesList = new ArrayList<>();
-		for (SubTask subTask : subTaskStorage.values()) {
-			if (subTask.getEpicID() == epic.getID()) {
-				statusValuesList.add(subTask.getStatus());
-			}
-			if (statusValuesList.isEmpty() || !statusValuesList.contains(Status.IN_PROGRESS) && !statusValuesList.contains(Status.DONE)) {
-				epic.setStatus(Status.NEW);
-			} else if (!statusValuesList.contains(Status.IN_PROGRESS) && !statusValuesList.contains(Status.NEW)) {
-				epic.setStatus(Status.DONE);
-			} else {
-				epic.setStatus(Status.IN_PROGRESS);
-			}
-		}
-		epicStorage.put(epic.getID(), epic);
-	}
+	public void updateEpic(Epic epic);
 
-	public void updateSubTask(SubTask sub) {
-		int key = sub.getID();
-		subTaskStorage.put(key, sub);
-		updateEpic(epicStorage.get(sub.getEpicID()));
-	}
+	public void updateSubTask(SubTask sub);
 
-	public Task getTaskByID(int ID) {
-		if (!taskStorage.containsKey(ID)) {
-			System.out.println("Задача с этим номером ID отсутствует");
-		}
-		return taskStorage.get(ID);
-	}
+	public Task getTaskByID(int ID);
 
-	public Epic getEpicByID(int ID) {
-		if (!epicStorage.containsKey(ID)) {
-			System.out.println("Эпик с этим номером ID отсутствует");
-		}
-		return epicStorage.get(ID);
-	}
+	public Epic getEpicByID(int ID);
 
-	public SubTask getSubTaskByID(int ID) {
-		if (!subTaskStorage.containsKey(ID)) {
-			System.out.println("Подзадача с этим номером ID отсутствует");
-		}
-		return subTaskStorage.get(ID);
-	}
+	public SubTask getSubTaskByID(int ID);
 
-	public ArrayList<Task> getAllTasks() {
-		return new ArrayList<Task>(taskStorage.values());
-	}
+	public ArrayList<Task> getAllTasks();
 
-	public ArrayList<Epic> getAllEpics() {
-		return new ArrayList<Epic>(epicStorage.values());
-	}
+	public ArrayList<Epic> getAllEpics();
 
-	public ArrayList<SubTask> getAllSubTasks() {
-		return new ArrayList<SubTask>(subTaskStorage.values());
-	}
+	public ArrayList<SubTask> getAllSubTasks();
 
-	public HashMap<Integer, SubTask> getAllSubTasksByEpic(int ID) {
-		if (!epicStorage.containsKey(ID)) {
-			System.out.println("Эпик с этим номером ID отсутствует");
-		}
-		HashMap<Integer, SubTask> storage = new HashMap<>();
-		for (SubTask subTask : subTaskStorage.values()) {
-			if (subTask.getEpicID() == ID) {
-				storage.put(subTask.getID(), subTask);
-			}
-		}
-		return storage;
-	}
+	public ArrayList<SubTask> getAllSubTasksByEpic(int ID);
 
-	public void removeTaskByID(int ID) {
-		if (!taskStorage.containsKey(ID)) {
-			System.out.println("Задача с этим номером ID отсутствует");
-		}
-		taskStorage.remove(ID);
-	}
+	public void removeTaskByID(int ID);
 
-	public void removeEpicByID(int ID) {
-		if (!epicStorage.containsKey(ID)) {
-			System.out.println("Задача с этим номером ID отсутствует");
-		}
-		ArrayList<Integer> subTaskIDList = new ArrayList<>();
-		for (SubTask subTask : subTaskStorage.values()) {
-			if (subTask.getEpicID() == ID) {
-				subTaskIDList.add(subTask.getID());
-			}
-		}
-		epicStorage.remove(ID);
-		for (int key : subTaskIDList) {
-			subTaskStorage.remove(key);
-		}
-	}
+	public void removeEpicByID(int ID);
 
-	public void removeSubTaskByID(int ID) {
-		if (!subTaskStorage.containsKey(ID)) {
-			System.out.println("Задача с этим номером ID отсутствует");
-		}
-		subTaskStorage.remove(ID);
-	}
+	public void removeSubTaskByID(int ID);
 
-	public void removeAllTasks() {
-		taskStorage.clear();
-	}
+	public void removeAllTasks();
 
-	public void removeAllEpics() {
-		epicStorage.clear();
-		subTaskStorage.clear();
-	}
+	public void removeAllEpics();
 
-	public void removeAllSubTasks(int ID) {
-		subTaskStorage.clear();
-	}
+	public void removeAllSubTasks(int ID);
+
+
 }
