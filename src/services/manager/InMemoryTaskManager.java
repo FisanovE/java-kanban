@@ -7,13 +7,14 @@ import models.enums.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 	private int counter = 1;
-	private final HashMap<Integer, Task> taskStorage = new HashMap<>();
-	private final HashMap<Integer, Epic> epicStorage = new HashMap<>();
-	private final HashMap<Integer, SubTask> subTaskStorage = new HashMap<>();
+	private final Map<Integer, Task> taskStorage = new HashMap<>();
+	private final Map<Integer, Epic> epicStorage = new HashMap<>();
+	private final Map<Integer, SubTask> subTaskStorage = new HashMap<>();
 
 	private final HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -102,17 +103,17 @@ public class InMemoryTaskManager implements TaskManager {
 
 	@Override
 	public List<Task> getAllTasks() {
-		return new ArrayList<Task>(taskStorage.values());
+		return new ArrayList<>(taskStorage.values());
 	}
 
 	@Override
 	public List<Epic> getAllEpics() {
-		return new ArrayList<Epic>(epicStorage.values());
+		return new ArrayList<>(epicStorage.values());
 	}
 
 	@Override
 	public List<SubTask> getAllSubTasks() {
-		return new ArrayList<SubTask>(subTaskStorage.values());
+		return new ArrayList<>(subTaskStorage.values());
 	}
 
 	@Override
@@ -126,7 +127,7 @@ public class InMemoryTaskManager implements TaskManager {
 				storage.put(subTask.getID(), subTask);
 			}
 		}
-		return new ArrayList<SubTask>(storage.values());
+		return new ArrayList<>(storage.values());
 	}
 
 	@Override
@@ -135,6 +136,7 @@ public class InMemoryTaskManager implements TaskManager {
 			System.out.println("Задача с этим номером ID отсутствует");
 		}
 		taskStorage.remove(ID);
+		historyManager.remove(ID);
 	}
 
 	@Override
@@ -149,8 +151,9 @@ public class InMemoryTaskManager implements TaskManager {
 			}
 		}
 		epicStorage.remove(ID);
+		historyManager.remove(ID);
 		for (int key : subTaskIDList) {
-			subTaskStorage.remove(key);
+			removeSubTaskByID(key);
 		}
 	}
 
@@ -160,25 +163,41 @@ public class InMemoryTaskManager implements TaskManager {
 			System.out.println("Задача с этим номером ID отсутствует");
 		}
 		subTaskStorage.remove(ID);
+		historyManager.remove(ID);
 	}
 
 	@Override
 	public void removeAllTasks() {
+		for (Task task : taskStorage.values()) {
+			historyManager.remove(task.getID());
+		}
 		taskStorage.clear();
+
 	}
 
 	@Override
 	public void removeAllEpics() {
+		for (Epic epic : epicStorage.values()) {
+			historyManager.remove(epic.getID());
+		}
+
+		for (SubTask subTask : subTaskStorage.values()) {
+			historyManager.remove(subTask.getID());
+		}
+
 		epicStorage.clear();
 		subTaskStorage.clear();
 	}
 
 	@Override
 	public void removeAllSubTasks(int ID) {
+		for (SubTask subTask : subTaskStorage.values()) {
+			historyManager.remove(subTask.getID());
+		}
 		subTaskStorage.clear();
 	}
 
 	public List<Task> getHistory() {
-		return new ArrayList<Task>(historyManager.getHistory());
+		return new ArrayList<>(historyManager.getHistory());
 	}
 }
