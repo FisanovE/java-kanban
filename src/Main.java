@@ -1,7 +1,6 @@
 import models.business.Epic;
 import models.business.SubTask;
 import models.business.Task;
-import models.enums.Status;
 import services.manager.InMemoryTaskManager;
 import services.manager.Managers;
 
@@ -14,16 +13,16 @@ public class Main {
 
 //Создайте 2 задачи, один эпик с 3 подзадачами и эпик без подзадач.
 
-		Task task1 = new Task(0, "Уборка", "Сделать уборку в кухне", Status.NEW);
-		Task task2 = new Task(0, "Покупки", "Купить продукты в магазине", Status.NEW);
+		Task task1 = new Task("Уборка", "Сделать уборку в кухне");
+		Task task2 = new Task("Покупки", "Купить продукты в магазине");
 
-		Epic epic1 = new Epic(0, "Залить бетон", "Купить компоненты для бетона и залить бетон");
+		Epic epic1 = new Epic("Залить бетон", "Купить компоненты для бетона и залить бетон");
 
-		SubTask subTask1 = new SubTask(0, "Купить компоненты", "Купить компоненты для бетона", Status.NEW, 3);
-		SubTask subTask2 = new SubTask(0, "Залить бетон", "Залить бетон из купленных компонентов", Status.NEW, 3);
-		SubTask subTask3 = new SubTask(0, "Начать отдыхать", "Забросить всё и начать отдыхать", Status.NEW, 3);
+		SubTask subTask1 = new SubTask( "Купить компоненты", "Купить компоненты для бетона",  3);
+		SubTask subTask2 = new SubTask("Залить бетон", "Залить бетон из купленных компонентов",  3);
+		SubTask subTask3 = new SubTask("Начать отдыхать", "Забросить всё и начать отдыхать",  3);
 
-		Epic epic2 = new Epic(0, "Отдохнуть", "Отдохнуть от дел праведных");
+		Epic epic2 = new Epic("Отдохнуть", "Отдохнуть от дел праведных");
 
 		taskManager.addNewTask(task1);
 		taskManager.addNewTask(task2);

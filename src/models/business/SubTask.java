@@ -5,8 +5,8 @@ import models.enums.Status;
 public class SubTask extends Task {
 	private final int epicID;
 
-	public SubTask(int ID, String name, String annotation, Status status, int epicID) {
-		super(ID, name, annotation, status);
+	public SubTask(String name, String annotation, int epicID) {
+		super(name, annotation);
 		this.epicID = epicID;
 	}
 
