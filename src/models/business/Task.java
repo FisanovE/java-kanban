@@ -8,6 +8,11 @@ public class Task {
 	private int ID;
 	private Status status;
 
+	public Task(String name, String annotation) {
+		this.name = name;
+		this.annotation = annotation;
+	}
+
 	public Task(int ID, String name, String annotation) {
 		this.ID = ID;
 		this.name = name;

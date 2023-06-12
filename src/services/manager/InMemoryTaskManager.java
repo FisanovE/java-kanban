@@ -75,29 +75,31 @@ public class InMemoryTaskManager implements TaskManager {
 
 	@Override
 	public Task getTaskByID(int ID) {
-		if (!taskStorage.containsKey(ID)) {
+		if (taskStorage.containsKey(ID)) {
+			historyManager.add(taskStorage.get(ID));
+		} else {
 			System.out.println("Задача с этим номером ID отсутствует");
 		}
-		historyManager.add(taskStorage.get(ID));
 		return taskStorage.get(ID);
 	}
 
 	@Override
 	public Epic getEpicByID(int ID) {
-		if (!epicStorage.containsKey(ID)) {
+		if (epicStorage.containsKey(ID)) {
+			historyManager.add(epicStorage.get(ID));
+		} else {
 			System.out.println("Эпик с этим номером ID отсутствует");
 		}
-
-		historyManager.add(epicStorage.get(ID));
 		return epicStorage.get(ID);
 	}
 
 	@Override
 	public SubTask getSubTaskByID(int ID) {
-		if (!subTaskStorage.containsKey(ID)) {
+		if (subTaskStorage.containsKey(ID)) {
+			historyManager.add(subTaskStorage.get(ID));
+		} else {
 			System.out.println("Подзадача с этим номером ID отсутствует");
 		}
-		historyManager.add(subTaskStorage.get(ID));
 		return subTaskStorage.get(ID);
 	}
 
@@ -118,14 +120,15 @@ public class InMemoryTaskManager implements TaskManager {
 
 	@Override
 	public List<SubTask> getAllSubTasksByEpic(int ID) {
-		if (!epicStorage.containsKey(ID)) {
-			System.out.println("Эпик с этим номером ID отсутствует");
-		}
 		HashMap<Integer, SubTask> storage = new HashMap<>();
-		for (SubTask subTask : subTaskStorage.values()) {
-			if (subTask.getEpicID() == ID) {
-				storage.put(subTask.getID(), subTask);
+		if (epicStorage.containsKey(ID)) {
+			for (SubTask subTask : subTaskStorage.values()) {
+				if (subTask.getEpicID() == ID) {
+					storage.put(subTask.getID(), subTask);
+				}
 			}
+		} else {
+			System.out.println("Эпик с этим номером ID отсутствует");
 		}
 		return new ArrayList<>(storage.values());
 	}
@@ -134,6 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
 	public void removeTaskByID(int ID) {
 		if (!taskStorage.containsKey(ID)) {
 			System.out.println("Задача с этим номером ID отсутствует");
+			return;
 		}
 		taskStorage.remove(ID);
 		historyManager.remove(ID);
@@ -142,7 +146,8 @@ public class InMemoryTaskManager implements TaskManager {
 	@Override
 	public void removeEpicByID(int ID) {
 		if (!epicStorage.containsKey(ID)) {
-			System.out.println("Задача с этим номером ID отсутствует");
+			System.out.println("Эпик с этим номером ID отсутствует");
+			return;
 		}
 		List<Integer> subTaskIDList = new ArrayList<>();
 		for (SubTask subTask : subTaskStorage.values()) {
@@ -160,7 +165,8 @@ public class InMemoryTaskManager implements TaskManager {
 	@Override
 	public void removeSubTaskByID(int ID) {
 		if (!subTaskStorage.containsKey(ID)) {
-			System.out.println("Задача с этим номером ID отсутствует");
+			System.out.println("Подзадача с этим номером ID отсутствует");
+			return;
 		}
 		subTaskStorage.remove(ID);
 		historyManager.remove(ID);
