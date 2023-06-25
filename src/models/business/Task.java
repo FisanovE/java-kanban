@@ -3,8 +3,8 @@ package models.business;
 import models.enums.Status;
 
 public class Task {
-	private final String name;
-	private final String annotation;
+	private String name;
+	private String annotation;
 	private int ID;
 	private Status status;
 
@@ -24,6 +24,14 @@ public class Task {
 		this.name = name;
 		this.annotation = annotation;
 		this.status = status;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getAnnotation() {
+		return annotation;
 	}
 
 	public int getID() {

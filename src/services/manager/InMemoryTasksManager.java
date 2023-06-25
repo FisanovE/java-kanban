@@ -10,25 +10,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-public class InMemoryTaskManager implements TaskManager {
+public class InMemoryTasksManager implements TasksManager {
 	private int counter = 1;
 	private final Map<Integer, Task> taskStorage = new HashMap<>();
 	private final Map<Integer, Epic> epicStorage = new HashMap<>();
 	private final Map<Integer, SubTask> subTaskStorage = new HashMap<>();
 
-	private final HistoryManager historyManager = Managers.getDefaultHistory();
+	public HistoryManager historyManager = Managers.getDefaultHistory();
 
 	@Override
 	public int addNewTask(Task task) {
-		task.setID(counter);
+		if (task.getID() == 0) {
+			task.setID(counter);
+		} else {
+			task.setID(task.getID());
+		}
+		task.setStatus(Status.NEW);
 		taskStorage.put(task.getID(), task);
 		counter += 1;
 		return task.getID();
 	}
 
 	@Override
-	public int addNewEpicTask(Epic epic) {
-		epic.setID(counter);
+	public int addNewEpic(Epic epic) {
+		if (epic.getID() == 0) {
+			epic.setID(counter);
+		} else {
+			epic.setID(epic.getID());
+		}
 		epic.setStatus(Status.NEW);
 		epicStorage.put(epic.getID(), epic);
 		counter += 1;
@@ -37,7 +46,12 @@ public class InMemoryTaskManager implements TaskManager {
 
 	@Override
 	public int addNewSubTask(SubTask sub) {
-		sub.setID(counter);
+		if (sub.getID() == 0) {
+			sub.setID(counter);
+		} else {
+			sub.setID(sub.getID());
+		}
+		sub.setStatus(Status.NEW);
 		subTaskStorage.put(sub.getID(), sub);
 		counter += 1;
 		return sub.getID();

@@ -52,12 +52,14 @@ public class InMemoryHistoryManager implements HistoryManager {
 		ArrayList<Task> getTasks() {
 			ArrayList<Task> history = new ArrayList<>();
 			Node<Task> it = tail;
-			while (true) {
-				history.add(it.task);
-				if (it.prev == null) {
-					break;
-				} else {
-					it = it.prev;
+			if (it != null) {
+				while (true) {
+					history.add(it.task);
+					if (it.prev == null) {
+						break;
+					} else {
+						it = it.prev;
+					}
 				}
 			}
 			return history;

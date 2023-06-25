@@ -1,0 +1,5 @@
+id,type,name,status,description,epic
+1,TASK,Уборка,NEW,Сделать уборку в кухне
+4,EPIC,Отдохнуть,NEW,Отдохнуть от дел праведных
+ 
+1,4,

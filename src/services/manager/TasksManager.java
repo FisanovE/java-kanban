@@ -6,11 +6,11 @@ import models.business.Task;
 
 import java.util.List;
 
-public interface TaskManager {
+public interface TasksManager {
 
 	int addNewTask(Task task);
 
-	int addNewEpicTask(Epic epic);
+	int addNewEpic(Epic epic);
 
 	int addNewSubTask(SubTask sub);
 
