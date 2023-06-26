@@ -13,7 +13,7 @@ import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTasksManager implements TasksManager {
 
-	static File savedData;
+	private final File savedData;
 
 	public FileBackedTasksManager(File savedData) {
 		this.savedData = savedData;
@@ -78,10 +78,9 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 		FileBackedTasksManager fileBackedTasksManager = loadFromFile(new File("resources/savedData.csv"));
 	}
 
-	public void save() throws ManagerSaveException {
-		try {
-			FileWriter fw = new FileWriter(savedData);
-			BufferedWriter writer = new BufferedWriter(fw);
+	public void save() {
+		try (FileWriter fw = new FileWriter(savedData);
+			 BufferedWriter writer = new BufferedWriter(fw)) {
 			writer.write("id,type,name,status,description,epic" + "\n");
 			for (Task task : super.getAllTasks()) {
 				writer.write(toString(task));
@@ -94,9 +93,8 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 			}
 			writer.write(" " + "\n");
 			writer.write(historyToString(super.historyManager));
-			writer.close();
 		} catch (IOException e) {
-			System.out.println("Произошла ошибка во время записи файла.");
+			throw new ManagerSaveException ("Произошла ошибка при записи файла");
 		}
 	}
 
