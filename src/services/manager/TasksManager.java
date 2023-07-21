@@ -5,6 +5,7 @@ import models.business.SubTask;
 import models.business.Task;
 
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TasksManager {
 
@@ -47,4 +48,6 @@ public interface TasksManager {
 	void removeAllSubTasks(int ID);
 
 	List<Task> getHistory();
+
+	TreeSet<Task> getPrioritizedTasks();
 }

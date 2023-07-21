@@ -24,10 +24,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 		return new ArrayList<>(historyStorage.getTasks());
 	}
 
-	public void remove(int id) {
+	public void removeTaskFromHistory(int id) {
 		if (nodeTaskStorage.get(id) != null) {
 			historyStorage.removeNode(nodeTaskStorage.get(id));
 			nodeTaskStorage.remove(id);
+		} else {
+			System.out.println("Задача с этим номером ID отсутствует.");
 		}
 	}
 

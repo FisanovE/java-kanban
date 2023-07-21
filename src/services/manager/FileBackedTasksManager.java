@@ -9,11 +9,13 @@ import models.enums.TypesTasks;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTasksManager implements TasksManager {
 
 	private final File savedData;
+
 
 	public FileBackedTasksManager(File savedData) {
 		this.savedData = savedData;
@@ -26,35 +28,51 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 //Заведите несколько разных задач, эпиков и подзадач.
 		TasksManager taskManager = new FileBackedTasksManager(new File("resources/savedData.csv"));
 
-		Task task1 = new Task("Уборка", "Сделать уборку в кухне");
+
+		Task task1 = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000", formatter), 60L);
+
+		Task taskUpdate = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00" + ".000000000", formatter), 60L);
+
+		Epic epicUpdate = new Epic(12, "Выучить алфавит", "Выучить несколько букв алфавита", Status.IN_PROGRESS, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", formatter), 120L);
+
+		Task task0 = new Task("БухнУть!", "Злоупотребить спиртным", LocalDateTime.parse("2023-07-15T08:30:00.000000000", formatter), 20L);
+
 		Task task2 = new Task("Покупки", "Купить продукты в магазине");
 
-		Epic epic1 = new Epic("Залить бетон", "Купить компоненты для бетона и залить бетон");
+		Epic epic1 = new Epic("Выучить алфавит", "Выучить несколько букв алфавита");
 
-		SubTask subTask1 = new SubTask("Купить компоненты", "Купить компоненты для бетона", 3);
-		SubTask subTask2 = new SubTask("Залить бетон", "Залить бетон из купленных компонентов", 3);
-		SubTask subTask3 = new SubTask("Начать отдыхать", "Забросить всё и начать отдыхать", 3);
+		SubTask subTask1 = new SubTask("Выучить А", "Выучить букву А", LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", formatter), 120L, 3);
+
+		SubTask subTask2 = new SubTask("Выучить Б", "Выучить букву Б", LocalDateTime.parse("2023-07-15T11:40:00.000000000", formatter), 360L, 3);
+
+		SubTask subTask3 = new SubTask("Выучить В", "Выучить букву В", LocalDateTime.parse("2023-07" + "-15T17:40:00.000000000", formatter), 600L, 3);
 
 		Epic epic2 = new Epic("Отдохнуть", "Отдохнуть от дел праведных");
 
+		System.out.println();
 		taskManager.addNewTask(task1);
+		taskManager.addNewTask(task0);
 		taskManager.addNewTask(task2);
 		taskManager.addNewEpic(epic1);
 		taskManager.addNewEpic(epic2);
 		taskManager.addNewSubTask(subTask1);
 		taskManager.addNewSubTask(subTask2);
 		taskManager.addNewSubTask(subTask3);
+		System.out.println();
 
 //Запросите некоторые из них, чтобы заполнилась история просмотра.
+
 
 		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(3));
 		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(4));
 		System.out.println("Просмотр задачи: " + taskManager.getTaskByID(1));
-		//System.out.println("Просмотр задачи: " + taskManager.getTaskByID(2));
+		System.out.println("Просмотр задачи: " + taskManager.getTaskByID(2));
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(6));
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(7));
 
-		System.out.println("Последние задачи: " + taskManager.getHistory());
+		//System.out.println("Последние задачи: " + taskManager.getHistory());
+		System.out.println("История задач:\n" + taskManager.getHistory());
+		System.out.println("Задачи по приоритету: \n" + taskManager.getPrioritizedTasks());
 
 		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(4));
 		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(3));
@@ -62,15 +80,24 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(7));
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(5));
 
-		System.out.println("Последние задачи: " + taskManager.getHistory());
+		//System.out.println("Последние задачи: " + taskManager.getHistory());
+		System.out.println("История задач: \n" + taskManager.getHistory());
+		System.out.println("Задачи по приоритету: \n" + taskManager.getPrioritizedTasks());
 
 		System.out.println("Удалена задача 2");
 		taskManager.removeTaskByID(2);
-		System.out.println("Последние задачи: " + taskManager.getHistory());
+		//System.out.println("Последние задачи: " + taskManager.getHistory());
+		System.out.println("История задач: \n" + taskManager.getHistory());
+		System.out.println("Задачи по приоритету: \n" + taskManager.getPrioritizedTasks());
 
-		System.out.println("Удален эпик 1");
+		System.out.println("Удален эпик 3");
 		taskManager.removeEpicByID(3);
-		System.out.println("Последние задачи: " + taskManager.getHistory());
+		//System.out.println("Последние задачи: " + taskManager.getHistory());
+		System.out.println("История задач: \n" + taskManager.getHistory());
+		System.out.println("Задачи по приоритету: \n" + taskManager.getPrioritizedTasks());
+
+		taskManager.updateEpic(epicUpdate);
+
 
 //Создайте новый FileBackedTasksManager менеджер из этого же файла.
 //роверьте, что история просмотра восстановилась верно и все задачи, эпики, подзадачи, которые были в старом, есть в
@@ -79,9 +106,8 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 	}
 
 	public void save() {
-		try (FileWriter fw = new FileWriter(savedData);
-			 BufferedWriter writer = new BufferedWriter(fw)) {
-			writer.write("id,type,name,status,description,epic" + "\n");
+		try (FileWriter fw = new FileWriter(savedData); BufferedWriter writer = new BufferedWriter(fw)) {
+			writer.write("id,type,name,status,description,startTime,duration,epic" + "\n");
 			for (Task task : super.getAllTasks()) {
 				writer.write(toString(task));
 			}
@@ -94,19 +120,20 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 			writer.write(" " + "\n");
 			writer.write(historyToString(super.historyManager));
 		} catch (IOException e) {
-			throw new ManagerSaveException ("Произошла ошибка при записи файла");
+			throw new ManagerSaveException("Произошла ошибка при записи файла");
 		}
 	}
 
 	public static FileBackedTasksManager loadFromFile(File file) throws IOException {
 		FileBackedTasksManager manager = new FileBackedTasksManager(file);
 		String value = Files.readString(file.toPath());
+		if (value.isEmpty()) {
+			return manager;
+		}
 		String[] allData = value.split(" \n");
 		String[] tasksOfString = allData[0].split("\n");
-		List<Integer> tasksID = historyFromString(allData[1]);
-		Collections.reverse(tasksID);
 		Map<Integer, Task> tasksMap = new HashMap<>();
-		//List<Task> tasks = new ArrayList<>();
+		int counterRestore = 0;
 		for (String task : tasksOfString) {
 			if (task.contains("description")) {
 				continue;
@@ -120,35 +147,54 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 				manager.addNewTask(sortedTask);
 			}
 			tasksMap.put(sortedTask.getID(), sortedTask);
+			if (sortedTask.getID() > counterRestore) {
+				counterRestore = sortedTask.getID();
+			}
 		}
-		for (Integer key : tasksID) {
-			manager.historyManager.add(tasksMap.get(key));
+		if (allData.length > 1) {
+			List<Integer> tasksID = historyFromString(allData[1]);
+			Collections.reverse(tasksID);
+			for (Integer ID : tasksID) {
+				manager.historyManager.add(tasksMap.get(ID));
+			}
 		}
+
+		manager.setCounter(counterRestore + 1);
 		manager.save();
 		return manager;
 	}
 
 	public String toString(Task task) {
-		String result = "";
+		StringBuilder builder = new StringBuilder();
 		if (task instanceof SubTask) {
 			SubTask subTask = (SubTask) task;
-			result = subTask.getID() + "," + TypesTasks.SUBTASK + "," + subTask.getName() + "," + subTask.getStatus() + "," + subTask.getAnnotation() + "," + subTask.getEpicID() + "\n";
+			builder.append(subTask.getID()).append(",").append(TypesTasks.SUBTASK).append(",").append(subTask.getName())
+				   .append(",").append(subTask.getStatus()).append(",").append(subTask.getAnnotation()).append(",")
+				   .append(subTask.getStartTime()).append(",").append(subTask.getDuration()).append(",")
+				   .append(subTask.getEpicID()).append("\n");
 		} else if (task instanceof Epic) {
-			result = task.getID() + "," + TypesTasks.EPIC + "," + task.getName() + "," + task.getStatus() + "," + task.getAnnotation() + "\n";
+			builder.append(task.getID()).append(",").append(TypesTasks.EPIC).append(",").append(task.getName())
+				   .append(",").append(task.getStatus()).append(",").append(task.getAnnotation()).append(",")
+				   .append(task.getStartTime()).append(",").append(task.getDuration()).append(",").append("\n");
 		} else {
-			result = task.getID() + "," + TypesTasks.TASK + "," + task.getName() + "," + task.getStatus() + "," + task.getAnnotation() + "\n";
+			builder.append(task.getID()).append(",").append(TypesTasks.TASK).append(",").append(task.getName())
+				   .append(",").append(task.getStatus()).append(",").append(task.getAnnotation()).append(",")
+				   .append(task.getStartTime()).append(",").append(task.getDuration()).append(",").append("\n");
 		}
-		return result;
+		return builder.toString();
 	}
 
 	public static Task fromString(String value) {
 		String[] split = value.split(",");
 		if (split[1].equals("SUBTASK")) {
-			return new SubTask(Integer.parseInt(split[0]), split[2], split[4], Status.valueOf(split[3]), Integer.parseInt(split[5]));
+			LocalDateTime time = split[5].equals("null") ? null : LocalDateTime.parse((split[5]));
+			return new SubTask(Integer.parseInt(split[0]), split[2], split[4], Status.valueOf(split[3]), time, Long.parseLong(split[6]), Integer.parseInt(split[7]));
 		} else if (split[1].equals("EPIC")) {
-			return new Epic(Integer.parseInt(split[0]), split[2], split[4], Status.valueOf(split[3]));
+			LocalDateTime time = split[5].equals("null") ? null : LocalDateTime.parse((split[5]));
+			return new Epic(Integer.parseInt(split[0]), split[2], split[4], Status.valueOf(split[3]), time, Long.parseLong(split[6]));
 		}
-		return new Task(Integer.parseInt(split[0]), split[2], split[4], Status.valueOf(split[3]));
+		LocalDateTime time = split[5].equals("null") ? null : LocalDateTime.parse((split[5]));
+		return new Task(Integer.parseInt(split[0]), split[2], split[4], Status.valueOf(split[3]), time, Long.parseLong(split[6]));
 	}
 
 	public static String historyToString(HistoryManager manager) {
