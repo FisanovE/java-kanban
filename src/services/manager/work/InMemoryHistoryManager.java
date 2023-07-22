@@ -1,7 +1,8 @@
-package services.manager;
+package services.manager.work;
 
 import models.business.Node;
 import models.business.Task;
+import services.manager.structure.HistoryManager;
 
 import java.util.*;
 

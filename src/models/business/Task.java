@@ -82,8 +82,8 @@ public class Task {
 		String start = startTime == null ? null : startTime.format(formatter);
 		String end = startTime == null ? null : getEndTime().format(formatter);
 		StringBuilder builder = new StringBuilder();
-		return builder.append(start).append("__").append(end).append("__").append(ID).append("__").append(name)
-					  .append("__").append(status).append("__").append(annotation).append("\n").toString();
+		return builder.append(getClass().getSimpleName()).append(": ID=[").append(ID).append("] startTime=[").append(start).append("] endTime=[").append(end).append(
+				"] name=[").append(name).append("] status=[").append(status).append("] annotation=[").append(annotation).append("]").append("\n").toString();
 	}
 
 	public LocalDateTime getEndTime() {

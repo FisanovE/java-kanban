@@ -1,4 +1,4 @@
-package services.manager;
+package services.manager.work;
 
 import exceptions.ManagerSaveException;
 import models.business.Epic;
@@ -6,6 +6,8 @@ import models.business.SubTask;
 import models.business.Task;
 import models.enums.Status;
 import models.enums.TypesTasks;
+import services.manager.structure.HistoryManager;
+import services.manager.structure.TasksManager;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -29,23 +31,24 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 		TasksManager taskManager = new FileBackedTasksManager(new File("resources/savedData.csv"));
 
 
-		Task task1 = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000", formatter), 60L);
+		Task task1 = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000"
+				, DateUtils.formatter), 60L);
 
-		Task taskUpdate = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00" + ".000000000", formatter), 60L);
+		Task taskUpdate = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00" + ".000000000", DateUtils.formatter), 60L);
 
-		Epic epicUpdate = new Epic(12, "Выучить алфавит", "Выучить несколько букв алфавита", Status.IN_PROGRESS, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", formatter), 120L);
+		Epic epicUpdate = new Epic(12, "Выучить алфавит", "Выучить несколько букв алфавита", Status.IN_PROGRESS, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L);
 
-		Task task0 = new Task("БухнУть!", "Злоупотребить спиртным", LocalDateTime.parse("2023-07-15T08:30:00.000000000", formatter), 20L);
+		Task task0 = new Task("БухнУть!", "Злоупотребить спиртным", LocalDateTime.parse("2023-07-15T08:30:00.000000000", DateUtils.formatter), 20L);
 
 		Task task2 = new Task("Покупки", "Купить продукты в магазине");
 
 		Epic epic1 = new Epic("Выучить алфавит", "Выучить несколько букв алфавита");
 
-		SubTask subTask1 = new SubTask("Выучить А", "Выучить букву А", LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", formatter), 120L, 3);
+		SubTask subTask1 = new SubTask("Выучить А", "Выучить букву А", LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L, 3);
 
-		SubTask subTask2 = new SubTask("Выучить Б", "Выучить букву Б", LocalDateTime.parse("2023-07-15T11:40:00.000000000", formatter), 360L, 3);
+		SubTask subTask2 = new SubTask("Выучить Б", "Выучить букву Б", LocalDateTime.parse("2023-07-15T11:40:00.000000000", DateUtils.formatter), 360L, 3);
 
-		SubTask subTask3 = new SubTask("Выучить В", "Выучить букву В", LocalDateTime.parse("2023-07" + "-15T17:40:00.000000000", formatter), 600L, 3);
+		SubTask subTask3 = new SubTask("Выучить В", "Выучить букву В", LocalDateTime.parse("2023-07" + "-15T17:40:00.000000000", DateUtils.formatter), 600L, 3);
 
 		Epic epic2 = new Epic("Отдохнуть", "Отдохнуть от дел праведных");
 
@@ -63,21 +66,21 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 //Запросите некоторые из них, чтобы заполнилась история просмотра.
 
 
-		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(3));
-		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(4));
-		System.out.println("Просмотр задачи: " + taskManager.getTaskByID(1));
-		System.out.println("Просмотр задачи: " + taskManager.getTaskByID(2));
-		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(6));
+		System.out.print("Просмотр задачи: " + taskManager.getEpicByID(3));
+		System.out.print("Просмотр задачи: " + taskManager.getEpicByID(4));
+		System.out.print("Просмотр задачи: " + taskManager.getTaskByID(1));
+		System.out.print("Просмотр задачи: " + taskManager.getTaskByID(2));
+		System.out.print("Просмотр задачи: " + taskManager.getSubTaskByID(6));
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(7));
 
 		//System.out.println("Последние задачи: " + taskManager.getHistory());
 		System.out.println("История задач:\n" + taskManager.getHistory());
 		System.out.println("Задачи по приоритету: \n" + taskManager.getPrioritizedTasks());
 
-		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(4));
-		System.out.println("Просмотр задачи: " + taskManager.getEpicByID(3));
-		System.out.println("Просмотр задачи: " + taskManager.getTaskByID(1));
-		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(7));
+		System.out.print("Просмотр задачи: " + taskManager.getEpicByID(4));
+		System.out.print("Просмотр задачи: " + taskManager.getEpicByID(3));
+		System.out.print("Просмотр задачи: " + taskManager.getTaskByID(1));
+		System.out.print("Просмотр задачи: " + taskManager.getSubTaskByID(7));
 		System.out.println("Просмотр задачи: " + taskManager.getSubTaskByID(5));
 
 		//System.out.println("Последние задачи: " + taskManager.getHistory());

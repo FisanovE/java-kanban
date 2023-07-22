@@ -1,14 +1,19 @@
-package services.manager;
+package services.manager.work;
 
 import models.business.Epic;
 import models.business.SubTask;
 import models.business.Task;
 import models.enums.Status;
+import services.manager.structure.HistoryManager;
+import services.manager.structure.Managers;
+import services.manager.structure.TasksManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static services.manager.work.DateUtils.formatter2;
 
 public class InMemoryTasksManager implements TasksManager {
 	private int counter = 1;
@@ -16,7 +21,7 @@ public class InMemoryTasksManager implements TasksManager {
 	private final Map<Integer, Epic> epicStorage = new HashMap<>();
 	private final Map<Integer, SubTask> subTaskStorage = new HashMap<>();
 
-	Comparator<Task> comparator = new Comparator<>() {
+	private final Comparator<Task> comparator = new Comparator<>() {
 		@Override
 		public int compare(Task task1, Task task2) {
 
@@ -41,13 +46,10 @@ public class InMemoryTasksManager implements TasksManager {
 		}
 	};
 
-	TreeSet<Task> tasksSortedByTime = new TreeSet<>(comparator);
-	Set<Task> set = new TreeSet<>(tasksSortedByTime);
+	private final TreeSet<Task> tasksSortedByTime = new TreeSet<>(comparator);
+	private final Set<Task> set = new TreeSet<>(tasksSortedByTime);
 
-	public HistoryManager historyManager = Managers.getDefaultHistory();
-
-	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSSSSSSSS]");
-	static DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd.MM.yy|HH:mm");
+	protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
 	@Override
@@ -389,4 +391,9 @@ public class InMemoryTasksManager implements TasksManager {
 		return tasksSortedByTime;
 	}
 
+}
+
+class DateUtils {
+	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSSSSSSSS]");
+	static DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd.MM.yy|HH:mm");
 }

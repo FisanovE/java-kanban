@@ -1,4 +1,7 @@
-package services.manager;
+package services.manager.structure;
+
+import services.manager.work.InMemoryHistoryManager;
+import services.manager.work.InMemoryTasksManager;
 
 public class Managers {
 

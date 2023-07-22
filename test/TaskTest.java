@@ -67,7 +67,7 @@ class TaskTest {
 	@Test
 	@DisplayName ("Получение задачи в виде строки")
 	void testToString() {
-		String sampleText = "15.07.23|09:40__15.07.23|10:40__1__Уборка__DONE__Сделать уборку в кухне\n";
+		String sampleText = "Task: ID=[1] startTime=[15.07.23|09:40] endTime=[15.07.23|10:40] name=[Уборка] status=[DONE] annotation=[Сделать уборку в кухне]\n";
 		assertEquals(task.toString(), sampleText, "Текст задач не совпадает");
 	}
 

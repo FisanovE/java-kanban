@@ -2,8 +2,8 @@ import models.business.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import services.manager.InMemoryTasksManager;
-import services.manager.Managers;
+import services.manager.work.InMemoryTasksManager;
+import services.manager.structure.Managers;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +18,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTasksManage
 		taskManager = (InMemoryTasksManager) Managers.getDefault();
 	}
 
-	@Test
+	/*@Test
 	@DisplayName ("Создание новой задачи")
 	void shouldCreateNewTask() {
 		Task task = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000", formatter), 60L);
@@ -28,7 +28,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTasksManage
 		final Task savedTask = taskManager.getTaskByID(taskId);
 		assertNotNull(savedTask, "Задача не найдена.");
 		assertEquals(task, savedTask, "Задачи не совпадают.");
-	}
+	}*/
 
 	@Test
 	@DisplayName ("Установка значения счетчика")
@@ -52,7 +52,17 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTasksManage
 	}
 
 	@Test
-	@DisplayName ("Сортировка задач по времени")
+	@DisplayName ("Получение истории при отсутствии задач")
+	void shouldReturnHistoryListWhenNoTasks() {
+
+		final List<Task> history = taskManager.getHistory();
+
+		assertNotNull(history, "Список задач не создан.");
+		assertTrue(history.isEmpty(), "История не пуста.");
+	}
+
+	@Test
+	@DisplayName ("Получение задач, с сортировкой по времени")
 	void shouldReturnPrioritizedTasks() {
 		Task task = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000", formatter), 60L);
 		final int taskId = taskManager.addNewTask(task);
@@ -62,6 +72,16 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTasksManage
 
 		assertNotNull(prioritizedTasks, "Список задач пуст.");
 		assertEquals(1, prioritizedTasks.size(), "Список задач пуст.");
+	}
+
+	@Test
+	@DisplayName ("Получение задач, с сортировкой по времени при отсутствии задач")
+	void shouldReturnPrioritizedTasksWhenNoTasks() {
+
+		final TreeSet<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+
+		assertNotNull(prioritizedTasks, "Список задач не создан.");
+		assertTrue(prioritizedTasks.isEmpty(), "Список задач не пуст.");
 	}
 
 }

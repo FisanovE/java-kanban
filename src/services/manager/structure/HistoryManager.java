@@ -1,4 +1,4 @@
-package services.manager;
+package services.manager.structure;
 
 import models.business.Task;
 

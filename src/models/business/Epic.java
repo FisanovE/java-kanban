@@ -60,8 +60,9 @@ public class Epic extends Task {
 		String start = startTime == null ? null : startTime.format(formatter);
 		String end = startTime == null ? null : getEndTime().format(formatter);
 		StringBuilder builder = new StringBuilder();
-		return builder.append(start).append("__").append(end).append("__").append(getID()).append("__")
-					  .append(getName()).append("__").append(getStatus()).append("__").append(getAnnotation())
-					  .append("\n").toString();
+		return builder.append(getClass().getSimpleName()).append(": ID=[").append(getID()).append("] startTime=[").append(start).append("] endTime=[").append(end)
+					  .append("] name=[").append(getName()).append("] status=[").append(getStatus())
+					  .append("] annotation=[").append(getAnnotation()).append("]").append("\n").toString();
 	}
 }
+

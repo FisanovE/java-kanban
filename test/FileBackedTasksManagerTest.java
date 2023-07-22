@@ -4,7 +4,7 @@ import models.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import services.manager.FileBackedTasksManager;
+import services.manager.work.FileBackedTasksManager;
 
 import java.io.*;
 import java.time.LocalDateTime;

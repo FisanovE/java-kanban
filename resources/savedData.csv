@@ -1,5 +1,4 @@
 id,type,name,status,description,startTime,duration,epic
 1,TASK,Уборка,NEW,Сделать уборку в кухне,2023-07-15T08:00,60,
-4,EPIC,Отдохнуть,NEW,Отдохнуть от дел праведных,null,0,
  
-1,4,
+1,
