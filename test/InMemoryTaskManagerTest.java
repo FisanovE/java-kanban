@@ -2,8 +2,8 @@ import models.business.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import services.manager.work.InMemoryTasksManager;
-import services.manager.structure.Managers;
+import services.manager.event.impl.InMemoryTasksManager;
+import services.manager.utils.Managers;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,17 +18,6 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTasksManage
 		taskManager = (InMemoryTasksManager) Managers.getDefault();
 	}
 
-	/*@Test
-	@DisplayName ("Создание новой задачи")
-	void shouldCreateNewTask() {
-		Task task = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000", formatter), 60L);
-
-		final int taskId = taskManager.addNewTask(task);
-
-		final Task savedTask = taskManager.getTaskByID(taskId);
-		assertNotNull(savedTask, "Задача не найдена.");
-		assertEquals(task, savedTask, "Задачи не совпадают.");
-	}*/
 
 	@Test
 	@DisplayName ("Установка значения счетчика")

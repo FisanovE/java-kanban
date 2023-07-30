@@ -3,7 +3,7 @@ import models.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import services.manager.work.InMemoryHistoryManager;
+import services.manager.event.impl.InMemoryHistoryManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

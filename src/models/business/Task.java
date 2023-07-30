@@ -5,14 +5,15 @@ import models.enums.Status;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Task {
 	private String name;
 	private String annotation;
-	private int ID;
+	private int ID = 0;
 	private Status status;
-	private LocalDateTime startTime;
-	private long duration;
+	LocalDateTime startTime;
+	long duration;
 
 
 	public Task(String name, String annotation) {
@@ -76,6 +77,28 @@ public class Task {
 
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true; // проверяем адреса объектов
+		if (obj == null) return false; // проверяем ссылку на null
+		if (this.getClass() != obj.getClass()) return false; // сравниваем классы
+		Task otherTask = (Task) obj; // открываем доступ к полям другого объекта
+		return Objects.equals(name, otherTask.name) && // проверяем все поля
+				Objects.equals(annotation, otherTask.annotation) && // нужно логическое «и»
+				(ID == otherTask.ID) && // примитивы сравниваем через ==
+				Objects.equals(status, otherTask.status) &&
+				Objects.equals(startTime, otherTask.startTime) &&
+				(duration == otherTask.duration);
+	}
+
+	@Override
+	public int hashCode() {
+		// вызываем вспомогательный метод и передаём в него нужные поля
+		return Objects.hash(ID, name);
+	}
+
+
+
+	@Override
 
 	public String toString() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy|HH:mm");
@@ -100,6 +123,10 @@ public class Task {
 
 	public long getDuration() {
 		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 
 }

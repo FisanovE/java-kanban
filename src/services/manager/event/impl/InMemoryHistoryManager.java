@@ -1,8 +1,8 @@
-package services.manager.work;
+package services.manager.event.impl;
 
 import models.business.Node;
 import models.business.Task;
-import services.manager.structure.HistoryManager;
+import services.manager.event.HistoryManager;
 
 import java.util.*;
 

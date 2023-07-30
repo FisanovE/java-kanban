@@ -1,4 +1,4 @@
-package services.manager.structure;
+package services.manager.event;
 
 import models.business.Task;
 

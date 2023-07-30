@@ -1,13 +1,14 @@
-package services.manager.work;
+package services.manager.event.impl;
 
-import exceptions.ManagerSaveException;
+import services.manager.exceptions.ManagerSaveException;
 import models.business.Epic;
 import models.business.SubTask;
 import models.business.Task;
 import models.enums.Status;
 import models.enums.TypesTasks;
-import services.manager.structure.HistoryManager;
-import services.manager.structure.TasksManager;
+import services.manager.event.HistoryManager;
+import services.manager.event.TasksManager;
+import services.manager.utils.DateUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -16,19 +17,19 @@ import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTasksManager implements TasksManager {
 
-	private final File savedData;
+	static String path;
 
 
-	public FileBackedTasksManager(File savedData) {
-		this.savedData = savedData;
+	public FileBackedTasksManager(String path) {
+		this.path = path;
 	}
 
-	public static void main(String[] args) throws ManagerSaveException, IOException {
+	public static void main(String[] args) throws ManagerSaveException{
 
 //Тестирование по ТЗ ФП-6
 
 //Заведите несколько разных задач, эпиков и подзадач.
-		TasksManager taskManager = new FileBackedTasksManager(new File("resources/savedData.csv"));
+		TasksManager taskManager = new FileBackedTasksManager("resources/savedData.csv");
 
 
 		Task task1 = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000"
@@ -36,7 +37,8 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 
 		Task taskUpdate = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00" + ".000000000", DateUtils.formatter), 60L);
 
-		Epic epicUpdate = new Epic(12, "Выучить алфавит", "Выучить несколько букв алфавита", Status.IN_PROGRESS, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L);
+		Epic epicUpdate = new Epic(12, "Выучить алфавит", "Выучить несколько букв алфавита", Status.IN_PROGRESS,
+				LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L);
 
 		Task task0 = new Task("БухнУть!", "Злоупотребить спиртным", LocalDateTime.parse("2023-07-15T08:30:00.000000000", DateUtils.formatter), 20L);
 
@@ -99,17 +101,17 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 		System.out.println("История задач: \n" + taskManager.getHistory());
 		System.out.println("Задачи по приоритету: \n" + taskManager.getPrioritizedTasks());
 
-		taskManager.updateEpic(epicUpdate);
+		//taskManager.updateEpic(epicUpdate);
 
 
 //Создайте новый FileBackedTasksManager менеджер из этого же файла.
 //роверьте, что история просмотра восстановилась верно и все задачи, эпики, подзадачи, которые были в старом, есть в
 // новом менеджере.
-		FileBackedTasksManager fileBackedTasksManager = loadFromFile(new File("resources/savedData.csv"));
+		FileBackedTasksManager fileBackedTasksManager = ((FileBackedTasksManager) taskManager).load(new File(path));
 	}
 
 	public void save() {
-		try (FileWriter fw = new FileWriter(savedData); BufferedWriter writer = new BufferedWriter(fw)) {
+		try (FileWriter fw = new FileWriter(new File(path)); BufferedWriter writer = new BufferedWriter(fw)) {
 			writer.write("id,type,name,status,description,startTime,duration,epic" + "\n");
 			for (Task task : super.getAllTasks()) {
 				writer.write(toString(task));
@@ -127,8 +129,11 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 		}
 	}
 
-	public static FileBackedTasksManager loadFromFile(File file) throws IOException {
-		FileBackedTasksManager manager = new FileBackedTasksManager(file);
+	public static FileBackedTasksManager load(File file) {
+		try {
+
+
+		FileBackedTasksManager manager = new FileBackedTasksManager("resources/savedData.csv");
 		String value = Files.readString(file.toPath());
 		if (value.isEmpty()) {
 			return manager;
@@ -165,6 +170,9 @@ public class FileBackedTasksManager extends InMemoryTasksManager implements Task
 		manager.setCounter(counterRestore + 1);
 		manager.save();
 		return manager;
+		} catch (IOException e) {
+			throw new ManagerSaveException("Произошла ошибка при записи файла");
+		}
 	}
 
 	public String toString(Task task) {

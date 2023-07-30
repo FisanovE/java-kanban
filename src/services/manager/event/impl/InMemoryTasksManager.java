@@ -1,19 +1,18 @@
-package services.manager.work;
+package services.manager.event.impl;
 
 import models.business.Epic;
 import models.business.SubTask;
 import models.business.Task;
 import models.enums.Status;
-import services.manager.structure.HistoryManager;
-import services.manager.structure.Managers;
-import services.manager.structure.TasksManager;
+import services.manager.event.HistoryManager;
+import services.manager.utils.Managers;
+import services.manager.event.TasksManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static services.manager.work.DateUtils.formatter2;
+import static services.manager.utils.DateUtils.formatter2;
 
 public class InMemoryTasksManager implements TasksManager {
 	private int counter = 1;
@@ -393,7 +392,3 @@ public class InMemoryTasksManager implements TasksManager {
 
 }
 
-class DateUtils {
-	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSSSSSSSS]");
-	static DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd.MM.yy|HH:mm");
-}

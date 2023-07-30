@@ -1,10 +1,11 @@
-import exceptions.ManagerSaveException;
+import services.manager.utils.Managers;
+import services.manager.exceptions.ManagerSaveException;
 import models.business.Task;
 import models.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import services.manager.work.FileBackedTasksManager;
+import services.manager.event.impl.FileBackedTasksManager;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -20,8 +21,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest <FileBackedTasksManager
 	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSSSSSSSS]");
 
 	@BeforeEach
-	void setUp() {
-		taskManager = new FileBackedTasksManager(new File("resources/savedData.csv"));
+	void setUp() throws IOException, InterruptedException {
+		//taskManager = Managers.getDefaultFileManager("resources/savedData.csv");
+		taskManager = Managers.getDefaultFileManager("resources/savedData.csv");
 	}
 
 
@@ -31,7 +33,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest <FileBackedTasksManager
 		Task task = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000", formatter), 60L);
 		final int taskId = taskManager.addNewTask(task);
 
-		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(new File("resources" + "/savedData.csv"));
+		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.load(new File("resources" + "/savedData.csv"));
 		Task savedTask = taskManagerFromFile.getTaskByID(taskId);
 
 		assertAll(() -> assertNotNull(savedTask, "Задача не найдена."),
@@ -57,7 +59,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest <FileBackedTasksManager
 			throw new ManagerSaveException("Произошла ошибка при записи файла");
 		}
 
-		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(new File("resources" + "/savedData.csv"));
+		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.load(new File("resources" + "/savedData.csv"));
 
 		assertAll(
 				() -> assertTrue(taskManagerFromFile.getHistory().isEmpty(), "История не пуста."),
@@ -75,7 +77,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest <FileBackedTasksManager
 			throw new ManagerSaveException("Произошла ошибка при записи файла");
 		}
 
-		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(new File("resources" + "/savedData.csv"));
+		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.load(new File("resources" + "/savedData.csv"));
 
 		assertAll(
 				() -> assertTrue(taskManagerFromFile.getHistory().isEmpty(), "История не пуста."),
@@ -94,7 +96,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest <FileBackedTasksManager
 
 		taskManager.save();
 
-		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(new File("resources" + "/savedData.csv"));
+		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.load(new File("resources" + "/savedData.csv"));
 		Task savedTask2 = taskManager.getTaskByID(1);
 		Task savedHistory = taskManager.getTaskByID(1);
 		assertAll(() -> assertNotNull(savedTask2, "Задача не найдена."),
@@ -126,7 +128,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest <FileBackedTasksManager
 
 		taskManager.save();
 
-		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(new File("resources" +
+		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.load(new File("resources" +
 				"/savedData.csv"));
 		List<Task> savedHistory = taskManager.getHistory();
 		Task savedTask2 = taskManager.getTaskByID(1);
@@ -148,7 +150,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest <FileBackedTasksManager
 
 		taskManager.save();
 
-		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(new File("resources" + "/savedData.csv"));
+		FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.load(new File("resources" + "/savedData.csv"));
 
 		assertAll(
 				() -> assertTrue(taskManagerFromFile.getHistory().isEmpty(), "История не пуста."),
