@@ -20,17 +20,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class HttpTaskServer {
 
 
-	private static final int PORT = 8080;
+	private static final int PORT = 9090;
 	private final HttpServer server;
 
 	Gson gson;
-	private final TasksManager manager;
+	public final TasksManager manager;
 
 	public HttpTaskServer() throws IOException, InterruptedException {
-		this.manager = Managers.getDefaultHttpManager("http://localhost:8080");
-		gson = Managers.getGson();
 		server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
 		server.createContext("/tasks", this :: handleTasks);
+		this.manager = Managers.getDefaultHttpManager("http://localhost:8080");
+		gson = Managers.getGson();
+
 	}
 
 	private void handleTasks(HttpExchange httpExchange) {
@@ -288,14 +289,13 @@ public class HttpTaskServer {
 	}
 
 	public void start() {
-		System.out.println("Запускаем сервер на порту " + PORT);
-		System.out.println("Открой в браузере http://localhost:" + PORT + "/");
+		System.out.println("Запускаем HTTP-сервер на порту " + PORT);
 		server.start();
 	}
 
 	public void stop() {
 		server.stop(0);
-		System.out.println("Остановили сервер на порту " + PORT);
+		System.out.println("Остановили HTTP-сервер на порту " + PORT);
 
 	}
 

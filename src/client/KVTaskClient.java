@@ -20,10 +20,11 @@ public class KVTaskClient {
 
 		URI uriRegister = URI.create(url + "/register");
 		HttpRequest requestRegister = HttpRequest.newBuilder().uri(uriRegister).GET().build();
-
+		System.out.println(HttpResponse.BodyHandlers.ofString());
 		HttpResponse<String> responseRegister = client.send(requestRegister, HttpResponse.BodyHandlers.ofString());
-
+		System.out.println(responseRegister);
 		apiToken = responseRegister.body();
+		System.out.println("Регистрация завершена, получен apiToken: " + apiToken);
 	}
 
 	public void put(String key, String json) throws IOException, InterruptedException {

@@ -6,6 +6,7 @@ import models.business.Task;
 import models.enums.Status;
 import org.junit.jupiter.api.*;
 import server.HttpTaskServer;
+import server.KVServer;
 import services.manager.utils.Managers;
 import services.manager.event.TasksManager;
 import services.manager.utils.DateUtils;
@@ -24,39 +25,45 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HttpTaskServerTest {
-	HttpTaskServer taskServer;
+	HttpTaskServer httpServer;
+
+	KVServer kvServer;
 	Gson gson = Managers.getGson();
-	private TasksManager manager;
+	//private TasksManager manager;
 
 	Task task;
 	Epic epic;
+	SubTask subTask;
 
 	@BeforeEach
 	void init() throws IOException, InterruptedException {
+		kvServer = new KVServer();
+		kvServer.start();
+		httpServer = new HttpTaskServer();
+		httpServer.start();
 
-		manager = Managers.getDefaultHttpManager("http://localhost:8080");
-		taskServer = new HttpTaskServer();
+
 		task = new Task("Уборка", "Сделать уборку в кухне", LocalDateTime.parse("2023-07-15T08:00:00.000000000", DateUtils.formatter), 60L);
-		manager.addNewTask(task);
+		httpServer.manager.addNewTask(task);
 		epic = new Epic("Выучить алфавит", "Выучить несколько букв алфавита");
-		int epicId = manager.addNewEpic(epic);
-		SubTask subTask = new SubTask("Выучить А", "Выучить букву А", LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L, epicId);
-		manager.addNewSubTask(subTask);
-		taskServer.start();
+		int epicId = httpServer.manager.addNewEpic(epic);
+		subTask = new SubTask("Выучить А", "Выучить букву А", LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L, epicId);
+		httpServer.manager.addNewSubTask(subTask);
+
 	}
 
 	@AfterEach
 	void stop() {
-		taskServer.stop();
+		httpServer.stop();
+		kvServer.stop();
 	}
 
 	@Test
 	@DisplayName ("Получение списка всех задач")
 	public void shouldReturnListAllTasks() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/task");
+		URI uri = URI.create("http://localhost:9090/tasks/task");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
-
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
@@ -74,7 +81,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение списка всех эпиков")
 	void shouldReturnListAllEpics() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/epic");
+		URI uri = URI.create("http://localhost:9090/tasks/epic");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
 		Epic epicAdded = new Epic(2, "Выучить алфавит", "Выучить несколько букв алфавита", Status.NEW, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L);
@@ -97,7 +104,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение списка всех подзадач")
 	void shouldReturnListAllSubTasks() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/subtask");
+		URI uri = URI.create("http://localhost:9090/tasks/subtask");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
 		SubTask subTaskAdded = new SubTask(3, "Выучить А", "Выучить букву А", Status.NEW, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L, 2);
@@ -119,7 +126,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение по ID задачи ")
 	void shouldReturnTaskByID() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/task/?id=1");
+		URI uri = URI.create("http://localhost:9090/tasks/task/?id=1");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -137,7 +144,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение по ID эпика ")
 	void shouldReturnEpicByID() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/epic/?id=2");
+		URI uri = URI.create("http://localhost:9090/tasks/epic/?id=2");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
 		Epic epicAdded = new Epic(2, "Выучить алфавит", "Выучить несколько букв алфавита", Status.NEW, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L);
@@ -158,7 +165,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение по ID подзадачи ")
 	void shouldReturnSubTaskByID() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/subtask/?id=3");
+		URI uri = URI.create("http://localhost:9090/tasks/subtask/?id=3");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
 		SubTask sub = new SubTask(3, "Выучить А", "Выучить букву А", Status.NEW, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L, 2);
@@ -179,7 +186,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение списка подзадач эпика")
 	void shouldReturnListAllSubTasksByEpic() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/subtask/epic/?id=2");
+		URI uri = URI.create("http://localhost:9090/tasks/subtask/epic/?id=2");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
 		SubTask subTaskAdded = new SubTask(3, "Выучить А", "Выучить букву А", Status.NEW, LocalDateTime.parse("2023-07" + "-15T09:40:00.000000000", DateUtils.formatter), 120L, 2);
@@ -202,11 +209,11 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение истории просмотра")
 	void shouldGetHistory() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/task/history");
+		URI uri = URI.create("http://localhost:9090/tasks/task/history");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
-		manager.getTaskByID(1);
-		manager.getEpicByID(2);
-		manager.getSubTaskByID(3);
+		httpServer.manager.getTaskByID(1);
+		httpServer.manager.getEpicByID(2);
+		httpServer.manager.getSubTaskByID(3);
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
@@ -225,7 +232,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Получение сортировки по времени")
 	void shouldGetSortedTaskFromTime() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks");
+		URI uri = URI.create("http://localhost:9090/tasks");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -244,7 +251,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Добавление задачи")
 	void shouldAddNewTask() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/task");
+		URI uri = URI.create("http://localhost:9090/tasks/task");
 		Task taskNew = new Task("Выучить А", "Выучить букву А", LocalDateTime.parse("2023-07-15T09:40:00" + ".000000000", DateUtils.formatter), 120L);
 		Task taskAdded = new Task(4, "Выучить А", "Выучить букву А", Status.NEW, LocalDateTime.parse("2023-07-15T09:40:00.000000000", DateUtils.formatter), 120L);
 
@@ -255,7 +262,7 @@ class HttpTaskServerTest {
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		int id = Integer.parseInt(response.body());
 
-		Task taskActual = manager.getTaskByID(id);
+		Task taskActual = httpServer.manager.getTaskByID(id);
 
 		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertNotNull(taskActual, "Задача не добавляется"), () -> assertEquals(taskAdded, taskActual, "Задачи не совпадают"));
 	}
@@ -264,7 +271,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Добавление эпика")
 	void shouldAddNewEpic() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/epic");
+		URI uri = URI.create("http://localhost:9090/tasks/epic");
 		Epic epicNew = new Epic("Выучить А", "Выучить букву А");
 		Epic epicAdded = new Epic(4, "Выучить А", "Выучить букву А", Status.NEW);
 
@@ -275,7 +282,7 @@ class HttpTaskServerTest {
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		int id = Integer.parseInt(response.body());
 
-		Epic epicActual = manager.getEpicByID(id);
+		Epic epicActual = httpServer.manager.getEpicByID(id);
 
 		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertNotNull(epicActual, "Эпик не добавляется"), () -> assertEquals(epicAdded, epicActual, "Эпики не совпадают"));
 	}
@@ -285,7 +292,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Добавление подзадачи")
 	void shouldAddNewSubTask() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/subtask");
+		URI uri = URI.create("http://localhost:9090/tasks/subtask");
 		SubTask subTaskNew = new SubTask("Выучить А", "Выучить букву А", LocalDateTime.parse("2023-07-15T09:40:00" + ".000000000", DateUtils.formatter), 120L, 2);
 		SubTask subTaskAdded = new SubTask(4, "Выучить А", "Выучить букву А", Status.NEW, LocalDateTime.parse("2023-07-15T09:40:00.000000000", DateUtils.formatter), 120L, 2);
 
@@ -296,7 +303,7 @@ class HttpTaskServerTest {
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		int id = Integer.parseInt(response.body());
 
-		SubTask subTaskActual = manager.getSubTaskByID(id);
+		SubTask subTaskActual = httpServer.manager.getSubTaskByID(id);
 
 		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertNotNull(subTaskActual, "Подзадача не добавляется"), () -> assertEquals(subTaskAdded, subTaskActual, "Подзадачи не совпадают"));
 	}
@@ -306,7 +313,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Обновление задачи")
 	void shouldUpdateTask() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/task");
+		URI uri = URI.create("http://localhost:9090/tasks/task");
 
 		Task taskUpdate = new Task(1, "Уборка", "Сделать уборку в кухне", Status.IN_PROGRESS, LocalDateTime.parse("2023-07-15T08:00:00.000000000", DateUtils.formatter), 60L);
 
@@ -316,7 +323,7 @@ class HttpTaskServerTest {
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-		Task taskActual = manager.getTaskByID(taskUpdate.getID());
+		Task taskActual = httpServer.manager.getTaskByID(taskUpdate.getID());
 
 		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertNotNull(taskActual, "Задача не обновляется"), () -> assertEquals(taskUpdate, taskActual, "Задачи не совпадают"));
 	}
@@ -326,7 +333,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Обновление эпика")
 	void shouldUpdateEpic() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/epic");
+		URI uri = URI.create("http://localhost:9090/tasks/epic");
 
 		Epic epicUpdate = new Epic(2, "Покупки", "Купить продукты", Status.NEW, LocalDateTime.parse("2023-07-15T09:40:00.000000000", DateUtils.formatter), 120L);
 
@@ -336,7 +343,7 @@ class HttpTaskServerTest {
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-		Epic epicActual = manager.getEpicByID(epicUpdate.getID());
+		Epic epicActual = httpServer.manager.getEpicByID(epicUpdate.getID());
 
 		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertNotNull(epicActual, "Эпик не обновляется"), () -> assertEquals(epicUpdate, epicActual, "Эпики не совпадают"));
 	}
@@ -346,7 +353,7 @@ class HttpTaskServerTest {
 	@DisplayName ("Обновление подзадачи")
 	void shouldUpdateSubTask() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/subtask");
+		URI uri = URI.create("http://localhost:9090/tasks/subtask");
 
 		SubTask subTaskUpdate = new SubTask(3, "Уборка", "Сделать уборку в кухне", Status.IN_PROGRESS, LocalDateTime.parse("2023-07-15T08:00:00.000000000", DateUtils.formatter), 60L, 2);
 
@@ -356,7 +363,7 @@ class HttpTaskServerTest {
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-		SubTask subTaskActual = manager.getSubTaskByID(subTaskUpdate.getID());
+		SubTask subTaskActual = httpServer.manager.getSubTaskByID(subTaskUpdate.getID());
 
 		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertNotNull(subTaskActual, "Подзадача не обновляется"), () -> assertEquals(subTaskUpdate, subTaskActual, "Подзадачи не совпадают"));
 	}
@@ -366,13 +373,13 @@ class HttpTaskServerTest {
 	@DisplayName ("Удаление по ID задачи")
 	void shouldRemoveTaskByID() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/task/?id=1");
+		URI uri = URI.create("http://localhost:9090/tasks/task/?id=1");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).DELETE().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
-		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(manager.getAllTasks()
+		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(httpServer.manager.getAllTasks()
 																						  .isEmpty(), "Задача не удаляется"));
 	}
 
@@ -380,13 +387,13 @@ class HttpTaskServerTest {
 	@DisplayName ("Удаление по ID эпика")
 	void shouldRemoveEpicByID() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/epic/?id=2");
+		URI uri = URI.create("http://localhost:9090/tasks/epic/?id=2");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).DELETE().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
-		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(manager.getAllEpics()
+		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(httpServer.manager.getAllEpics()
 																						  .isEmpty(), "Эпик не удаляется"));
 	}
 
@@ -395,13 +402,13 @@ class HttpTaskServerTest {
 	@DisplayName ("Удаление по ID подзадачи")
 	void shouldRemoveSubTaskByID() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/subtask/?id=3");
+		URI uri = URI.create("http://localhost:9090/tasks/subtask/?id=3");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).DELETE().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
-		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(manager.getAllSubTasks()
+		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(httpServer.manager.getAllSubTasks()
 																						  .isEmpty(), "Подзадача не удаляется"));
 	}
 
@@ -410,13 +417,13 @@ class HttpTaskServerTest {
 	@DisplayName ("Удаление всех задач")
 	void shouldRemoveAllTask() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/task/task");
+		URI uri = URI.create("http://localhost:9090/tasks/task/task");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).DELETE().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
-		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(manager.getAllTasks()
+		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(httpServer.manager.getAllTasks()
 																						  .isEmpty(), "Задачи не удаляются"));
 	}
 
@@ -424,13 +431,13 @@ class HttpTaskServerTest {
 	@DisplayName ("Удаление всех эпиков")
 	void shouldRemoveAllEpic() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/epic/epic");
+		URI uri = URI.create("http://localhost:9090/tasks/epic/epic");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).DELETE().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
-		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(manager.getAllEpics()
+		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(httpServer.manager.getAllEpics()
 																						  .isEmpty(), "Эпики не удаляются"));
 	}
 
@@ -439,13 +446,13 @@ class HttpTaskServerTest {
 	@DisplayName ("Удаление всех подзадач")
 	void shouldRemoveAllSubTask() throws IOException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
-		URI uri = URI.create("http://localhost:8080/tasks/subtask/epic/?id=2");
+		URI uri = URI.create("http://localhost:9090/tasks/subtask/epic/?id=2");
 		HttpRequest request = HttpRequest.newBuilder().uri(uri).DELETE().build();
 
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		assertEquals(200, response.statusCode());
 
-		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(manager.getAllSubTasks()
+		assertAll(() -> assertEquals(200, response.statusCode()), () -> assertTrue(httpServer.manager.getAllSubTasks()
 																						  .isEmpty(), "Подзадачи не удаляются"));
 	}
 }
